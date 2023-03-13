@@ -4,10 +4,27 @@
  * @var iterable<\App\Model\Entity\Article> $articles
  */
 ?>
+<div class="row">
+<aside class="column">
+
+    <div class="side-nav">
+        <h4 class="heading"><?= __('Actions') ?></h4>
+
+        <?= $this->Html->link("Add User", ['action' => 'add_user'], ['class' => 'side-nav-item']) ?>
+        <?= $this->Html->link('Edit Your Info', ['controller' => 'Users','action' => 'edit'], ['class' => 'side-nav-item']) ?>
+
+    </div>
+</aside>
+
+<div class="column-responsive column-80">
 <div class="articles index content">
+
+
+
     <?= $this->Html->link(__('New Article'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <?= $this->Html->link("Logout", ['action' => 'logout'], ['class' => 'button float-right']) ?>
-    <?= $this->Html->link("Add User", ['action' => 'add_user'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link("My Submissions", ['action' => 'mysubmission'], ['class' => 'button float-right']) ?>
+<!--    --><?php //= $this->Html->link("Logout", ['action' => 'logout'], ['class' => 'button float-right']) ?>
+
     <h3><?= __('Articles') ?></h3>
     <div class="table-responsive">
         <table>
@@ -16,6 +33,7 @@
                     <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('title') ?></th>
                     <th><?= $this->Paginator->sort('category_id') ?></th>
+                    <th><?= $this->Paginator->sort('Creator') ?></th>
                     <th><?= $this->Paginator->sort('created') ?></th>
                     <th><?= $this->Paginator->sort('modified') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
@@ -26,9 +44,11 @@
                 <tr>
                     <td><?= $this->Number->format($article->id) ?></td>
                     <td><?= h($article->title) ?></td>
-                    <td><?= $this->Number->format($article->category_id) ?></td>
+                    <td><?= h($article->Category) ?></td>
+                    <td><?= h($article->Creator) ?></td>
                     <td><?= h($article->created) ?></td>
                     <td><?= h($article->modified) ?></td>
+
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $article->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $article->id]) ?>
@@ -49,4 +69,6 @@
         </ul>
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
+</div>
+</div>
 </div>

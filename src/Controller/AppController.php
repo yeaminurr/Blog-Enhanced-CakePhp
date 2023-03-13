@@ -51,6 +51,11 @@ class AppController extends Controller
         //$this->loadComponent('FormProtection');
         // Add this line to check authentication result and lock your site
         $this->loadComponent('Authentication.Authentication');
+
+
+
+
+
     }
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
@@ -58,5 +63,6 @@ class AppController extends Controller
         // for all controllers in our application, make index and view
         // actions public, skipping the authentication check.
         $this->Authentication->addUnauthenticatedActions(['index', 'view']);
+
     }
 }

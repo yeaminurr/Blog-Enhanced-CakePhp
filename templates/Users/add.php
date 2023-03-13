@@ -13,7 +13,6 @@
     </aside>
     <div class="column-responsive column-80">
 
-
         <div class="users form">
             <?= $this->Form->create($user) ?>
 
@@ -23,7 +22,8 @@
                 <?= $this->Form->control('password') ?>
                 <?= $this->Form->control('role', [
                     //'options' => ['admin' => 'Admin', 'author' => 'Author']
-                    'options' => $options
+                    'options' => $options,
+                    'label' => 'Fields'
 
 
                 ]) ?>

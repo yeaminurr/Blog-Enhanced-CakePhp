@@ -48,7 +48,7 @@ class BridgeViewTable extends Table
             'foreignKey' => 'article_id',
         ]);
         $this->belongsTo('Roles', [
-            'foreignKey' => 'role_id',
+            'foreignKey' => 'role_id'
         ]);
     }
 

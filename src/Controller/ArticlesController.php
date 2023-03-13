@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Entity\BridgeView;
 use App\Model\Table\BridgeViewTable;
 use Cake\Controller\Controller;
 
@@ -28,11 +29,60 @@ class ArticlesController extends AppController
         );
         $identity = $this->Authentication->getIdentity();
         $loggedin_user_data = $identity->getOriginalData();
+        $role = $loggedin_user_data["role"];
 
-        $bridgetable->find()->where(['user_role'=>$loggedin_user_data["role_id"]]);
+        //$bridgetable->find()->where(['user_role'=>$loggedin_user_data["role"]]);
+        $users = Controller::fetchtable(
+            'Users'
+        );
+        $categories = Controller::fetchtable(
+            'Categories'
+        );
+        $articles = $this->Articles;
+        //$bridgetable = $bridgetable->find();
+         $query= $articles->find('all')->contain(array('Categories','Users'))
+
+            -> join([
+                'table' => 'bridge_view',
+                'alias' => 'b',
+                'type' => 'INNER',
+                'conditions' => ['articles.id=b.article_id','b.role_id'=>$role]
+            ],["b.role_id=="=>$role])
+        ->join([
+            'table' => 'categories',
+            'alias' => 'c',
+            'type' => 'INNER',
+            'conditions' => 'c.id = articles.category_id'
+        ])
+                ->join([
+                    'table' => 'users',
+                    'alias' => 'u',
+                    'type' => 'INNER',
+                    'conditions' => 'u.role = b.role_id'
+                ])
 
 
-        $articles = $this->paginate($this->Articles->find()->where(['user_id'=>$loggedin_user_data["id"]]));
+
+            ->group(['articles.id']);
+         $query = $query->select(["id",'title','Category' =>'Categories.name',"created","modified",'Creator'=>'Users.email',
+             'role' => "Users.role"]);
+         //$query =$query->find('all')-> where((['role'=>$role]));
+
+
+//        $newtab = $this->Articles->query('select $articles.id, $articles.title, $articles.created,$users.email, $categories.name, $users.role from $bridgetable
+//            INNER join $articles on $articles.id=$bridgetable.article_id
+//            INNER join $categories on $categories.id = $articles.category_id
+//            LEFT Join $users on $users.role = $bridgetable.role_id
+//            WHERE $users.role = $role
+//            GROUP by $articles.id;');
+
+       // $articles = $this->paginate($newtab);
+
+
+        //$articles = $this->paginate($this->Articles->find()->where(['user_id'=>$loggedin_user_data["id"]]));
+        $articles = $this->paginate($query);
+        //print_r( $query->toArray());
+        //echo $query;
 
         $this->set(compact('articles'));
     }
@@ -79,7 +129,7 @@ class ArticlesController extends AppController
         );
 
         $article = $this->Articles->newEmptyEntity();
-        echo $article;
+        //echo $article;
         //$bridge = ClassRegistry::init('Bridge')->newEmptyEntity();
         $bridge =$bridgetable->newEmptyEntity();
 
@@ -130,9 +180,21 @@ class ArticlesController extends AppController
      */
     public function edit($id = null)
     {
+
+
         $article = $this->Articles->get($id, [
             'contain' => [],
         ]);
+        $identity = $this->Authentication->getIdentity();
+        $loggedin_user_data = $identity->getOriginalData();
+        echo $article["User_id"];
+        if ($article["user_id"]!=$loggedin_user_data["id"]){
+            $this->Flash->error(__('To edit an article you have to be the creator'));
+            return $this->redirect(['action' => 'index']);
+
+
+
+        }
         if ($this->request->is(['patch', 'post', 'put'])) {
             $article = $this->Articles->patchEntity($article, $this->request->getData());
             if ($this->Articles->save($article)) {

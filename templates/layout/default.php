@@ -38,9 +38,14 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <body>
     <nav class="top-nav">
         <div class="top-nav-title">
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
+<!--            <a href="--><?php //= $this->Url->build('/') ?><!--"><span>Cake</span>PHP</a>-->
+
+            <?php echo $this->Html->image("Blog.png", ['alt' => 'CakePHP','height' => 60, 'width' => 110,'padding'=>'0px','margin'=>'0px']) ?>
+
+
         </div>
         <div class="top-nav-links">
+
             <a rel="noopener" href='<?php echo $this->Url->build(array('controller' => 'Users','action' => 'logout'))?>'>Log Out</a>
             <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
         </div>

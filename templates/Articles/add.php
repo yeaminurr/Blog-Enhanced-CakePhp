@@ -28,7 +28,7 @@
                 <?php
                     echo $this->Form->control('role_id',[
                     'multiple' => true,
-                    'options'=>[1=>"Admin",2=> "Author"]]
+                    'options'=>[2=>"Admin",1=> "Author"]]
 
                     );
                     ?>

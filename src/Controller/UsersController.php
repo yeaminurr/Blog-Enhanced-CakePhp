@@ -74,6 +74,22 @@ class UsersController extends AppController
      */
     public function add()
     {
+        $result = $this->Authentication->getResult();
+        $options=[1 => 'Author'];
+        if ($result->isValid()){
+
+            $identity = $this->Authentication->getIdentity();
+            $loggedin_user_data = $identity->getOriginalData();
+            //echo $loggedin_user_data;
+            if ($loggedin_user_data["role"]==2){
+                $options=array(2 => 'Admin', 1 => 'Author');
+            }
+
+        }
+
+
+
+
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
@@ -83,26 +99,7 @@ class UsersController extends AppController
             }
             $this->Flash->error(__('Unable to add the user.'));
         }
-        $result = $this->Authentication->getResult();
-        $options=[1 => 'Author'];
-        if ($result->isValid()){
 
-            $identity = $this->Authentication->getIdentity();
-            $loggedin_user_data = $identity->getOriginalData();
-            //echo $loggedin_user_data;
-            if ($loggedin_user_data["role"]==2){
-                $options=[2 => 'Admin', 1 => 'Author'];
-            }
-            //echo json_encode(compact('user','options'));
-//            $logged = true;
-//
-//            $this->set(compact('user','logged','loggedin_user_data'));
-//            $this->set('logged',$logged);
-//            $this->set('loggedin_user_data',$data);
-            #$this->set('user', $user,'');
-
-
-        }
         $this->set(compact('user','options'));
 
     }
@@ -114,6 +111,27 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
+
+    public function edit($id = null)
+    {
+        //$result = $this->Authentication->getResult();
+        $identity = $this->Authentication->getIdentity();
+        $loggedin_user_data = $identity->getOriginalData();
+        $id = $loggedin_user_data['id'];
+        $users = $this->Users->get($id, [
+            'contain' => [],
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $article = $this->Users->patchEntity($users, $this->request->getData());
+            if ($this->Users->save($users)) {
+                $this->Flash->success(__('The article has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The article could not be saved. Please, try again.'));
+        }
+        $this->set(compact('users'));
+    }
 
 
     /**
@@ -135,6 +153,7 @@ class UsersController extends AppController
 
     public function login()
     {
+
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
         // regardless of POST or GET, redirect if user is logged in
