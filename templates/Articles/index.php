@@ -4,38 +4,28 @@
  * @var iterable<\App\Model\Entity\Article> $articles
  */
 ?>
-<div class="row">
-<aside class="column">
 
-    <div class="side-nav">
-        <h4 class="heading"><?= __('Actions') ?></h4>
 
-        <?= $this->Html->link("Add User", ['action' => 'add_user'], ['class' => 'side-nav-item']) ?>
-        <?= $this->Html->link('Edit Your Info', ['controller' => 'Users','action' => 'edit'], ['class' => 'side-nav-item']) ?>
 
-    </div>
-</aside>
 
-<div class="column-responsive column-80">
+
+
 <div class="articles index content">
 
 
-
-    <?= $this->Html->link(__('New Article'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <?= $this->Html->link("My Submissions", ['action' => 'mysubmission'], ['class' => 'button float-right']) ?>
 <!--    --><?php //= $this->Html->link("Logout", ['action' => 'logout'], ['class' => 'button float-right']) ?>
 
     <h3><?= __('Articles') ?></h3>
     <div class="table-responsive">
-        <table>
+        <table class="table table-light table-striped">
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
-                    <th><?= $this->Paginator->sort('category_id') ?></th>
-                    <th><?= $this->Paginator->sort('Creator') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('title') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('category_id') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('Creator') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('created') ?></th>
+                    <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -71,4 +61,4 @@
     </div>
 </div>
 </div>
-</div>
+
