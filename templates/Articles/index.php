@@ -17,7 +17,13 @@
 
     <h3><?= __('Articles') ?></h3>
     <div class="table-responsive">
+<<<<<<< Updated upstream
         <table class="table table-light table-striped">
+=======
+        <?= $this->Form->control('Search',["class"=>'search',"id"=>"search",'onkeyup'=>'filterFunction()']) ?>
+
+        <table>
+>>>>>>> Stashed changes
             <thead>
                 <tr>
                     <th scope="col"><?= $this->Paginator->sort('id') ?></th>
@@ -29,7 +35,7 @@
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="table-body">
                 <?php foreach ($articles as $article): ?>
                 <tr>
                     <td><?= $this->Number->format($article->id) ?></td>
@@ -61,4 +67,30 @@
     </div>
 </div>
 </div>
+<<<<<<< Updated upstream
+=======
+    <p><?php echo $this->request->getRequestTarget() ; ?></p>
+    <script>
+        function filterFunction(){
+            var input = $("#search").val();
+            //console.log(input)
+
+            $.ajax({
+                type: "GET",
+                url:'<?php echo $this->Url->build(array('controller' => 'Articles','action' => 'ajaxfunc'))?>',
+                data:{
+                    search: input.toString()}
+            }).done(function (data) {
+                console.log(JSON.parse(data)[0]["id"])
+
+
+
+
+
+            })
+        }
+
+    </script>
+</div>
+>>>>>>> Stashed changes
 

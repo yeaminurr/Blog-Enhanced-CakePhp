@@ -14,6 +14,8 @@ use Cake\Controller\Controller;
  * @property \App\Model\Table\BridgeViewTable $Bridge
  * @method \App\Model\Entity\Article[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
+$pagetable= "";
+$articles="";
 class ArticlesController extends AppController
 {
     /**
@@ -21,8 +23,11 @@ class ArticlesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+
+    public function index($search='')
     {
+        global $articles;
+        global $pagetable;
 
         $bridgetable = Controller::fetchtable(
             'BridgeView'
@@ -79,12 +84,76 @@ class ArticlesController extends AppController
        // $articles = $this->paginate($newtab);
 
 
+
         //$articles = $this->paginate($this->Articles->find()->where(['user_id'=>$loggedin_user_data["id"]]));
-        $articles = $this->paginate($query);
+
+
+            $articles = $this->paginate($query);
+
+            $this->set(compact('articles'));
+
+
         //print_r( $query->toArray());
         //echo $query;
 
-        $this->set(compact('articles'));
+
+    }
+
+
+    public function ajaxfunc(){
+        global $articles;
+        $bridgetable = Controller::fetchtable(
+            'BridgeView'
+        );
+        $identity = $this->Authentication->getIdentity();
+        $loggedin_user_data = $identity->getOriginalData();
+        $role = $loggedin_user_data["role"];
+
+        //$bridgetable->find()->where(['user_role'=>$loggedin_user_data["role"]]);
+        $users = Controller::fetchtable(
+            'Users'
+        );
+        $categories = Controller::fetchtable(
+            'Categories'
+        );
+        $articles = $this->Articles;
+        //$bridgetable = $bridgetable->find();
+        $query= $articles->find('all')->contain(array('Categories','Users'))
+
+            -> join([
+                'table' => 'bridge_view',
+                'alias' => 'b',
+                'type' => 'INNER',
+                'conditions' => ['articles.id=b.article_id','b.role_id'=>$role]
+            ],["b.role_id=="=>$role])
+            ->join([
+                'table' => 'categories',
+                'alias' => 'c',
+                'type' => 'INNER',
+                'conditions' => 'c.id = articles.category_id'
+            ])
+            ->join([
+                'table' => 'users',
+                'alias' => 'u',
+                'type' => 'INNER',
+                'conditions' => 'u.role = b.role_id'
+            ])
+
+
+
+            ->group(['articles.id']);
+        $query = $query->select(["id",'title','Category' =>'Categories.name',"created","modified",'Creator'=>'Users.email',
+            'role' => "Users.role"]);
+        $search = $_GET['search'];
+
+        $articles = $query->find('all')->where(["title LIKE"=>'%'.$_GET['search'].'%']);
+
+
+        //echo json_encode('myjoson');
+        echo json_encode($articles, JSON_PRETTY_PRINT);
+
+        $response = $this->response->withStatus(200);
+        exit;
     }
     public function mysubmission(){
 
@@ -121,6 +190,7 @@ class ArticlesController extends AppController
      */
     public function add()
     {
+
 //        $bridgetable = Controller::loadModel(
 //            'BridgeViewTable'
 //        );
